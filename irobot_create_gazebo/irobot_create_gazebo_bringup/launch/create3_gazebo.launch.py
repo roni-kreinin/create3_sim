@@ -6,9 +6,12 @@
 
 import os
 
+from pathlib import Path
+
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchContext, LaunchDescription, SomeSubstitutionsType, Substitution
-from launch.actions import DeclareLaunchArgument, ExecuteProcess, IncludeLaunchDescription
+from launch.actions import DeclareLaunchArgument, ExecuteProcess
+from launch.actions import IncludeLaunchDescription, SetEnvironmentVariable
 from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
@@ -59,6 +62,12 @@ def generate_launch_description():
     # Directories
     pkg_create3_common_bringup = get_package_share_directory('irobot_create_common_bringup')
     pkg_create3_gazebo_bringup = get_package_share_directory('irobot_create_gazebo_bringup')
+    pkg_irobot_create_description = get_package_share_directory('irobot_create_description')
+
+    # Set ignition resource path
+    gz_resource_path = SetEnvironmentVariable(name='GAZEBO_MODEL_PATH', value=[
+                                                str(Path(pkg_irobot_create_description).
+                                                    parent.resolve())])
 
     # Paths
     create3_nodes_launch_file = PathJoinSubstitution(
@@ -158,6 +167,7 @@ def generate_launch_description():
     # Define LaunchDescription variable
     ld = LaunchDescription(ARGUMENTS)
     # Gazebo processes
+    ld.add_action(gz_resource_path)
     ld.add_action(gzserver)
     ld.add_action(gzclient)
     # Include robot description
