@@ -7,6 +7,8 @@
 #include <string>
 #include <vector>
 
+#include "irobot_create_toolbox/math.hpp"
+
 namespace irobot_create_gazebo_plugins
 {
 // Register this plugin with the simulator
@@ -32,7 +34,7 @@ void GazeboRosCliffSensor::Load(gazebo::sensors::SensorPtr parent, sdf::ElementP
 
   // Initialize ROS publisher
   pub_ = ros_node_->create_publisher<irobot_create_msgs::msg::HazardDetection>(
-    "~/out", rclcpp::SensorDataQoS());
+    "~/out", rclcpp::SensorDataQoS().reliable());
 
   new_laser_scans_connection_ = cliff_sensor_->LaserShape()->ConnectNewLaserScans(
     std::bind(&GazeboRosCliffSensor::OnNewLaserScans, this));
@@ -55,7 +57,8 @@ void GazeboRosCliffSensor::OnNewLaserScans()
   // Find the minimum detected distance
   std::vector<double> ranges;
   cliff_sensor_->Ranges(ranges);
-  const double range_detection = std::min(utils::FindMinimumRange(ranges), max_range_);
+  const double range_detection =
+    std::min(irobot_create_toolbox::FindMinimumRange(ranges), max_range_);
   RCLCPP_DEBUG_STREAM(ros_node_->get_logger(), "Cliff reporting " << range_detection << " m");
 
   if (range_detection >= detection_threshold_) {

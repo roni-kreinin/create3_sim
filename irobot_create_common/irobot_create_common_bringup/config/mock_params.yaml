@@ -1,5 +1,5 @@
 ---
-mock_publisher_node:
+mock_publisher:
   ros__parameters:
     # Mock buttons publisher topic
     button_topic: /interface_buttons
@@ -10,3 +10,4 @@ mock_publisher_node:
     slip_status_publish_rate: 62.0
     # Subscription topics
     lightring_topic: /cmd_lightring
+    audio_topic: /cmd_audio
