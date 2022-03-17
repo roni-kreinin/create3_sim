@@ -10,7 +10,7 @@ from pathlib import Path
 
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchContext, LaunchDescription, SomeSubstitutionsType, Substitution
-from launch.actions import DeclareLaunchArgument, ExecuteProcess
+from launch.actions import DeclareLaunchArgument, ExecuteProcess, TimerAction
 from launch.actions import IncludeLaunchDescription, RegisterEventHandler, SetEnvironmentVariable
 from launch.conditions import IfCondition
 from launch.event_handlers import OnProcessExit, OnExecutionComplete, OnProcessStart
@@ -170,12 +170,18 @@ def generate_launch_description():
         OnProcessStart(
             target_action=gzclient,
             on_start=[
-                     robot_description,
-                     spawn_robot,
-                     spawn_dock,
-                     dock_description,
-                     create3_nodes,
-                     rviz2]
+                TimerAction(
+                    period=10.0,
+                    actions=[
+                        robot_description,
+                        spawn_robot,
+                        spawn_dock,
+                        dock_description,
+                        create3_nodes,
+                        rviz2
+                    ]
+                )
+            ]        
         )
     )
 
