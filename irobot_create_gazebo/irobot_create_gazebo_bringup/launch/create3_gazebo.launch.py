@@ -171,14 +171,14 @@ def generate_launch_description():
             target_action=gzclient,
             on_start=[
                 TimerAction(
-                    period=10.0,
+                    period=15.0,
                     actions=[
-                        robot_description,
+                        #robot_description,
                         spawn_robot,
                         spawn_dock,
-                        dock_description,
-                        create3_nodes,
-                        rviz2
+                        #dock_description,
+                        #create3_nodes,
+                        #rviz2
                     ]
                 )
             ]        
@@ -193,13 +193,13 @@ def generate_launch_description():
     ld.add_action(gz_server_complete)
     ld.add_action(gzclient)
     # Include robot description
-    #ld.add_action(robot_description)
+    ld.add_action(robot_description)
     #ld.add_action(spawn_robot)
     #ld.add_action(spawn_dock)
-    #ld.add_action(dock_description)
+    ld.add_action(dock_description)
     # Include Create 3 nodes
-    #ld.add_action(create3_nodes)
+    ld.add_action(create3_nodes)
     # Rviz
-    #ld.add_action(rviz2)
+    ld.add_action(rviz2)
 
     return ld
