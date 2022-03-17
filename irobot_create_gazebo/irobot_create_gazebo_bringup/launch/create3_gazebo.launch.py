@@ -11,8 +11,9 @@ from pathlib import Path
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchContext, LaunchDescription, SomeSubstitutionsType, Substitution
 from launch.actions import DeclareLaunchArgument, ExecuteProcess
-from launch.actions import IncludeLaunchDescription, SetEnvironmentVariable
+from launch.actions import IncludeLaunchDescription, RegisterEventHandler, SetEnvironmentVariable
 from launch.conditions import IfCondition
+from launch.event_handlers import OnProcessExit, OnExecutionComplete, OnProcessStart
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import EnvironmentVariable, LaunchConfiguration, PathJoinSubstitution
 from launch_ros.actions import Node
@@ -165,20 +166,34 @@ def generate_launch_description():
         condition=IfCondition(use_rviz),
     )
 
+    gz_server_complete = RegisterEventHandler(
+        OnProcessStart(
+            target_action=gzclient,
+            on_start=[
+                     robot_description,
+                     spawn_robot,
+                     spawn_dock,
+                     dock_description,
+                     create3_nodes,
+                     rviz2]
+        )
+    )
+
     # Define LaunchDescription variable
     ld = LaunchDescription(ARGUMENTS)
     # Gazebo processes
     ld.add_action(gz_resource_path)
     ld.add_action(gzserver)
+    ld.add_action(gz_server_complete)
     ld.add_action(gzclient)
     # Include robot description
-    ld.add_action(robot_description)
-    ld.add_action(spawn_robot)
-    ld.add_action(spawn_dock)
-    ld.add_action(dock_description)
+    #ld.add_action(robot_description)
+    #ld.add_action(spawn_robot)
+    #ld.add_action(spawn_dock)
+    #ld.add_action(dock_description)
     # Include Create 3 nodes
-    ld.add_action(create3_nodes)
+    #ld.add_action(create3_nodes)
     # Rviz
-    ld.add_action(rviz2)
+    #ld.add_action(rviz2)
 
     return ld
