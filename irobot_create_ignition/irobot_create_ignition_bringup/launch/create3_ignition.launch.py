@@ -67,8 +67,8 @@ def generate_launch_description():
         'irobot_create_ignition_plugins')
     pkg_irobot_create_description = get_package_share_directory(
         'irobot_create_description')
-    pkg_ros_ign_gazebo = get_package_share_directory(
-        'ros_ign_gazebo')
+    pkg_ros_gz_sim = get_package_share_directory(
+        'ros_gz_sim')
 
     # Set Ignition resource path
     ign_resource_path = SetEnvironmentVariable(name='IGN_GAZEBO_RESOURCE_PATH',
@@ -85,8 +85,8 @@ def generate_launch_description():
                                                         'lib')])
 
     # Paths
-    ign_gazebo_launch = PathJoinSubstitution(
-        [pkg_ros_ign_gazebo, 'launch', 'ign_gazebo.launch.py'])
+    gz_sim_launch = PathJoinSubstitution(
+        [pkg_ros_gz_sim, 'launch', 'gz_sim.launch.py'])
     ros_ign_bridge_launch = PathJoinSubstitution(
         [pkg_irobot_create_ignition_bringup, 'launch', 'create3_ros_ignition_bridge.launch.py'])
     create3_nodes_launch = PathJoinSubstitution(
@@ -106,14 +106,14 @@ def generate_launch_description():
 
     # Ignition gazebo
     ignition_gazebo = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource([ign_gazebo_launch]),
+        PythonLaunchDescriptionSource([gz_sim_launch]),
         launch_arguments=[
-            ('ign_args', [LaunchConfiguration('world'),
-                          '.sdf',
-                          ' -v 4',
-                          ' --gui-config ',
-                          PathJoinSubstitution([pkg_irobot_create_ignition_bringup,
-                                                'gui', 'create3', 'gui.config'])])
+            ('gz_args', ['-r ', LaunchConfiguration('world'), '.sdf',
+                         ' -v 6',
+                         ' --gui-config ',
+                         PathJoinSubstitution([pkg_irobot_create_ignition_bringup,
+                                               'gui', 'create3', 'gui.config'])
+                        ])
         ]
     )
 
